@@ -8,6 +8,8 @@ import com.mygdx.obstacleavoid.config.GameConfig;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.title = GameConfig.TITLE;
+		// size
 		config.width = (int) GameConfig.WIDTH;
 		config.height = (int) GameConfig.HEIGHT;
 		// initial position of window

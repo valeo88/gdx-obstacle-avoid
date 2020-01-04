@@ -2,6 +2,7 @@ package com.mygdx.obstacleavoid.config;
 
 /** Constants for game configuration. */
 public class GameConfig {
+    public static final String TITLE = "Obstacle avoid";
 
     public static final float WIDTH = 480f; // px
     public static final float HEIGHT = 800f; // px
