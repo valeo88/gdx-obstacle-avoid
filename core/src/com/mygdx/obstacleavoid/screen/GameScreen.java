@@ -25,16 +25,32 @@ public class GameScreen implements Screen {
         renderer = new ShapeRenderer();
 
         player = new Player();
-        player.setPosition(GameConfig.WORLD_WIDTH / 2,1);
+
+        // player initial position
+        float startPlayerX = GameConfig.WORLD_WIDTH / 2f;
+        float startPlayerY = 1;
+        player.setPosition(startPlayerX, startPlayerY);
     }
 
     @Override
     public void render(float delta) {
+        update(delta);
+
         GdxUtils.clearScreen();
 
         renderDebug();
     }
 
+    /** Update game world. */
+    private void update(float delta) {
+        updatePlayer();
+    }
+
+    private void updatePlayer() {
+        player.update();
+    }
+
+    /** Render debug graphics. */
     private void renderDebug() {
         renderer.setProjectionMatrix(camera.combined);
         renderer.begin(ShapeRenderer.ShapeType.Line);
