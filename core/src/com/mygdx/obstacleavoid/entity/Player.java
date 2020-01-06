@@ -56,4 +56,8 @@ public class Player {
     public void drawDebug(ShapeRenderer renderer) {
         renderer.circle(bounds.x, bounds.y, bounds.radius, 30);
     }
+
+    public float getWidth() {
+        return SIZE;
+    }
 }

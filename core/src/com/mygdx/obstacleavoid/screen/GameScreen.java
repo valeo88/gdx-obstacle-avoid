@@ -3,6 +3,7 @@ package com.mygdx.obstacleavoid.screen;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.obstacleavoid.config.GameConfig;
@@ -56,6 +57,14 @@ public class GameScreen implements Screen {
 
     private void updatePlayer() {
         player.update();
+        blockPlayerFromLeavingTheWorld();
+    }
+
+    private void blockPlayerFromLeavingTheWorld() {
+        float playerX = MathUtils.clamp(player.getX(),
+                player.getWidth() / 2f,
+                GameConfig.WORLD_WIDTH - player.getWidth() / 2f);
+        player.setPosition(playerX, player.getY());
     }
 
     /** Render debug graphics. */
