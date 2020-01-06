@@ -4,9 +4,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.obstacleavoid.config.GameConfig;
+import com.mygdx.obstacleavoid.entity.Obstacle;
 import com.mygdx.obstacleavoid.entity.Player;
 import com.mygdx.obstacleavoid.util.GdxUtils;
 import com.mygdx.obstacleavoid.util.ViewportUtils;
@@ -19,6 +21,9 @@ public class GameScreen implements Screen {
     private ShapeRenderer renderer;
 
     private Player player;
+    private Array<Obstacle> obstacles = new Array<>();
+    private float obstaclesTimer;
+
     private DebugCameraController debugCameraController;
 
     @Override
@@ -53,6 +58,7 @@ public class GameScreen implements Screen {
     /** Update game world. */
     private void update(float delta) {
         updatePlayer();
+        updateObstacles(delta);
     }
 
     private void updatePlayer() {
@@ -65,6 +71,32 @@ public class GameScreen implements Screen {
                 player.getWidth() / 2f,
                 GameConfig.WORLD_WIDTH - player.getWidth() / 2f);
         player.setPosition(playerX, player.getY());
+    }
+
+    private void updateObstacles(float delta) {
+        for (Obstacle obstacle : obstacles) {
+            obstacle.update();
+        }
+
+        createNewObstacle(delta);
+    }
+
+    private void createNewObstacle(float delta) {
+        obstaclesTimer += delta;
+        if (obstaclesTimer >= GameConfig.OBSTACLE_SPAWN_TIME) {
+            float obstacleX = MathUtils.random(0f, GameConfig.WORLD_WIDTH);
+            float obstacleY = GameConfig.WORLD_HEIGHT;
+
+            Obstacle obstacle = new Obstacle();
+            // block from cutting by bounds
+            obstacleX = MathUtils.clamp(obstacleX,
+                    obstacle.getWidth() / 2f,
+                    GameConfig.WORLD_WIDTH - obstacle.getWidth() / 2f);
+            obstacle.setPosition(obstacleX, obstacleY);
+
+            obstacles.add(obstacle);
+            obstaclesTimer = 0;
+        }
     }
 
     /** Render debug graphics. */
@@ -81,6 +113,9 @@ public class GameScreen implements Screen {
 
     private void drawDebug() {
         player.drawDebug(renderer);
+        for (Obstacle obstacle : obstacles) {
+            obstacle.drawDebug(renderer);
+        }
     }
 
     @Override
