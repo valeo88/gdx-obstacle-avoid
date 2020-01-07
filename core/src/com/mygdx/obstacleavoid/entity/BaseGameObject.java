@@ -44,4 +44,8 @@ public abstract class BaseGameObject {
     public void drawDebug(ShapeRenderer renderer) {
         renderer.circle(bounds.x, bounds.y, bounds.radius, 30);
     }
+
+    public Circle getBounds() {
+        return bounds;
+    }
 }

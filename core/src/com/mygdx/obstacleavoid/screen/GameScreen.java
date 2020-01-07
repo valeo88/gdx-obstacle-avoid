@@ -24,6 +24,8 @@ public class GameScreen implements Screen {
     private Array<Obstacle> obstacles = new Array<>();
     private float obstaclesTimer;
 
+    private boolean alive = true;
+
     private DebugCameraController debugCameraController;
 
     @Override
@@ -48,7 +50,9 @@ public class GameScreen implements Screen {
         debugCameraController.handleDebugInput(delta);
         debugCameraController.applyTo(camera);
 
-        update(delta);
+        if (alive) {
+            update(delta);
+        }
 
         GdxUtils.clearScreen();
 
@@ -59,6 +63,10 @@ public class GameScreen implements Screen {
     private void update(float delta) {
         updatePlayer();
         updateObstacles(delta);
+
+        if (isPlayerCollidingWithObstacle()) {
+            alive = false;
+        }
     }
 
     private void updatePlayer() {
@@ -97,6 +105,13 @@ public class GameScreen implements Screen {
             obstacles.add(obstacle);
             obstaclesTimer = 0;
         }
+    }
+
+    private boolean isPlayerCollidingWithObstacle() {
+        for (Obstacle obstacle : obstacles) {
+            if (obstacle.isPlayerColliding(player)) return true;
+        }
+        return false;
     }
 
     /** Render debug graphics. */
