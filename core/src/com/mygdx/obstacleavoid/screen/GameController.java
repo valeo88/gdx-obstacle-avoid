@@ -92,6 +92,7 @@ public class GameController {
         }
 
         createNewObstacle(delta);
+        removePassedObstacles();
     }
 
     private void createNewObstacle(float delta) {
@@ -110,6 +111,17 @@ public class GameController {
 
             obstacles.add(obstacle);
             obstaclesTimer = 0;
+        }
+    }
+
+    private void removePassedObstacles() {
+        if (obstacles.size > 0) {
+            Obstacle first = obstacles.first();
+
+            float minObstacleY = -Obstacle.SIZE;
+            if (first.getY() < 0) {
+                obstacles.removeValue(first, true);
+            }
         }
     }
 
