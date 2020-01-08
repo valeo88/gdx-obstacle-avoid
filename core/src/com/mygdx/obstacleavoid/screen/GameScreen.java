@@ -39,6 +39,7 @@ public class GameScreen implements Screen {
 
     private int lives = GameConfig.LIVES_START;
     private int score;
+    private int displayScore;
 
     private DebugCameraController debugCameraController;
 
@@ -85,6 +86,7 @@ public class GameScreen implements Screen {
         updatePlayer();
         updateObstacles(delta);
         updateScore(delta);
+        updateDisplayScore(delta);
 
         if (isPlayerCollidingWithObstacle()) {
             lives--;
@@ -137,6 +139,16 @@ public class GameScreen implements Screen {
         }
     }
 
+    /* Refresh score smoothly.*/
+    private void updateDisplayScore(float delta) {
+        if (displayScore < score) {
+            displayScore = Math.min(
+                    score,
+                    displayScore + (int) (60 * delta)
+            );
+        }
+    }
+
     private boolean isPlayerCollidingWithObstacle() {
         for (Obstacle obstacle : obstacles) {
             if (obstacle.isPlayerColliding(player)) return true;
@@ -154,7 +166,7 @@ public class GameScreen implements Screen {
                 20,
                 GameConfig.HUD_HEIGHT - layout.height);
 
-        String scoreText = "SCORE: " + score;
+        String scoreText = "SCORE: " + displayScore;
         layout.setText(font, scoreText);
         font.draw(batch, scoreText,
                 GameConfig.HUD_WIDTH - layout.width - 20,
