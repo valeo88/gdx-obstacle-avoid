@@ -76,6 +76,7 @@ public class GameRenderer implements Disposable {
     }
 
     private void renderUi() {
+        hudViewport.apply();
         batch.setProjectionMatrix(hudCamera.combined);
         batch.begin();
 
@@ -96,6 +97,7 @@ public class GameRenderer implements Disposable {
 
     /** Render debug graphics. */
     private void renderDebug() {
+        viewport.apply();
         renderer.setProjectionMatrix(camera.combined);
         renderer.begin(ShapeRenderer.ShapeType.Line);
 
