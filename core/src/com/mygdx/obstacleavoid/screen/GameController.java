@@ -1,0 +1,140 @@
+package com.mygdx.obstacleavoid.screen;
+
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Logger;
+import com.mygdx.obstacleavoid.config.DifficultyLevel;
+import com.mygdx.obstacleavoid.config.GameConfig;
+import com.mygdx.obstacleavoid.entity.Obstacle;
+import com.mygdx.obstacleavoid.entity.Player;
+
+/** This controller class contains game logic. */
+public class GameController {
+    private static final Logger logger = new Logger(GameController.class.getName(), Logger.DEBUG);
+
+    private Player player;
+    private Array<Obstacle> obstacles = new Array<>();
+    private float obstaclesTimer;
+    private float scoreTimer;
+    private int lives = GameConfig.LIVES_START;
+    private int score;
+    private int displayScore;
+    private DifficultyLevel difficultyLevel = DifficultyLevel.MEDIUM;
+
+    public GameController() {
+        init();
+    }
+
+    private void init() {
+        player = new Player();
+        // initial position
+        float startPlayerX = GameConfig.WORLD_WIDTH / 2f;
+        float startPlayerY = 1;
+        player.setPosition(startPlayerX, startPlayerY);
+    }
+
+    /** Update game world. */
+    public void update(float delta) {
+        if (isGameOver()) {
+            logger.debug("Game over!");
+            return;
+        }
+
+        updatePlayer();
+        updateObstacles(delta);
+        updateScore(delta);
+        updateDisplayScore(delta);
+
+        if (isPlayerCollidingWithObstacle()) {
+            lives--;
+        }
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Array<Obstacle> getObstacles() {
+        return obstacles;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getDisplayScore() {
+        return displayScore;
+    }
+
+    private boolean isGameOver() {
+        return lives <= 0;
+    }
+
+    private void updatePlayer() {
+        player.update();
+        blockPlayerFromLeavingTheWorld();
+    }
+
+    private void blockPlayerFromLeavingTheWorld() {
+        float playerX = MathUtils.clamp(player.getX(),
+                player.getWidth() / 2f,
+                GameConfig.WORLD_WIDTH - player.getWidth() / 2f);
+        player.setPosition(playerX, player.getY());
+    }
+
+    private void updateObstacles(float delta) {
+        for (Obstacle obstacle : obstacles) {
+            obstacle.update();
+        }
+
+        createNewObstacle(delta);
+    }
+
+    private void createNewObstacle(float delta) {
+        obstaclesTimer += delta;
+        if (obstaclesTimer >= GameConfig.OBSTACLE_SPAWN_TIME) {
+            float obstacleX = MathUtils.random(0f, GameConfig.WORLD_WIDTH);
+            float obstacleY = GameConfig.WORLD_HEIGHT;
+
+            Obstacle obstacle = new Obstacle();
+            obstacle.setYSpeed(difficultyLevel.getObstacleSpeed());
+            // block from cutting by bounds
+            obstacleX = MathUtils.clamp(obstacleX,
+                    obstacle.getWidth() / 2f,
+                    GameConfig.WORLD_WIDTH - obstacle.getWidth() / 2f);
+            obstacle.setPosition(obstacleX, obstacleY);
+
+            obstacles.add(obstacle);
+            obstaclesTimer = 0;
+        }
+    }
+
+    private void updateScore(float delta) {
+        scoreTimer += delta;
+        if (scoreTimer >= GameConfig.SCORE_MAX_TIME) {
+            score += MathUtils.random(1, 5);
+            scoreTimer = 0f;
+        }
+    }
+
+    /* Refresh score smoothly.*/
+    private void updateDisplayScore(float delta) {
+        if (displayScore < score) {
+            displayScore = Math.min(
+                    score,
+                    displayScore + (int) (60 * delta)
+            );
+        }
+    }
+
+    private boolean isPlayerCollidingWithObstacle() {
+        for (Obstacle obstacle : obstacles) {
+            if (obstacle.isNotHit() && obstacle.isPlayerColliding(player)) return true;
+        }
+        return false;
+    }
+}
