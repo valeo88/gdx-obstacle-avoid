@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.obstacleavoid.assets.AssetsPaths;
@@ -20,6 +21,7 @@ import com.mygdx.obstacleavoid.util.ViewportUtils;
 import com.mygdx.obstacleavoid.util.debug.DebugCameraController;
 
 public class GameScreen implements Screen {
+    private static final Logger logger = new Logger(GameScreen.class.getName(), Logger.DEBUG);
 
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -83,6 +85,11 @@ public class GameScreen implements Screen {
 
     /** Update game world. */
     private void update(float delta) {
+        if (isGameOver()) {
+            logger.debug("Game over!");
+            return;
+        }
+        
         updatePlayer();
         updateObstacles(delta);
         updateScore(delta);
@@ -91,6 +98,10 @@ public class GameScreen implements Screen {
         if (isPlayerCollidingWithObstacle()) {
             lives--;
         }
+    }
+
+    private boolean isGameOver() {
+        return lives <= 0;
     }
 
     private void updatePlayer() {
@@ -151,7 +162,7 @@ public class GameScreen implements Screen {
 
     private boolean isPlayerCollidingWithObstacle() {
         for (Obstacle obstacle : obstacles) {
-            if (obstacle.isPlayerColliding(player)) return true;
+            if (obstacle.isNotHit() && obstacle.isPlayerColliding(player)) return true;
         }
         return false;
     }

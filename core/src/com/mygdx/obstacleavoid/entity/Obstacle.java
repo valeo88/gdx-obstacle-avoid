@@ -10,6 +10,7 @@ public class Obstacle extends  BaseGameObject{
     private static final float SIZE = 2 * BOUNDS_RADIUS;
 
     private float ySpeed = 0.1f;
+    private boolean hit;
 
     public Obstacle() {
         super(BOUNDS_RADIUS);
@@ -26,6 +27,11 @@ public class Obstacle extends  BaseGameObject{
 
     public boolean isPlayerColliding(Player player) {
         Circle playerBounds = player.getBounds();
-        return Intersector.overlaps(playerBounds, getBounds());
+        hit = Intersector.overlaps(playerBounds, getBounds());
+        return hit;
+    }
+
+    public boolean isNotHit() {
+        return !hit;
     }
 }
