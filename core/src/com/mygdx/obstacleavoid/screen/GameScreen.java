@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.obstacleavoid.assets.AssetsPaths;
+import com.mygdx.obstacleavoid.config.DifficultyLevel;
 import com.mygdx.obstacleavoid.config.GameConfig;
 import com.mygdx.obstacleavoid.entity.Obstacle;
 import com.mygdx.obstacleavoid.entity.Player;
@@ -42,6 +43,7 @@ public class GameScreen implements Screen {
     private int lives = GameConfig.LIVES_START;
     private int score;
     private int displayScore;
+    private DifficultyLevel difficultyLevel = DifficultyLevel.MEDIUM;
 
     private DebugCameraController debugCameraController;
 
@@ -131,6 +133,7 @@ public class GameScreen implements Screen {
             float obstacleY = GameConfig.WORLD_HEIGHT;
 
             Obstacle obstacle = new Obstacle();
+            obstacle.setYSpeed(difficultyLevel.getObstacleSpeed());
             // block from cutting by bounds
             obstacleX = MathUtils.clamp(obstacleX,
                     obstacle.getWidth() / 2f,
