@@ -3,6 +3,8 @@ package com.mygdx.obstacleavoid.screen;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
 import com.mygdx.obstacleavoid.config.DifficultyLevel;
 import com.mygdx.obstacleavoid.config.GameConfig;
 import com.mygdx.obstacleavoid.entity.Obstacle;
@@ -20,6 +22,7 @@ public class GameController {
     private int score;
     private int displayScore;
     private DifficultyLevel difficultyLevel = DifficultyLevel.MEDIUM;
+    private Pool<Obstacle> obstaclePool;
 
     public GameController() {
         init();
@@ -31,6 +34,8 @@ public class GameController {
         float startPlayerX = GameConfig.WORLD_WIDTH / 2f;
         float startPlayerY = 1;
         player.setPosition(startPlayerX, startPlayerY);
+
+        obstaclePool = Pools.get(Obstacle.class, 40);
     }
 
     /** Update game world. */
@@ -102,7 +107,7 @@ public class GameController {
                     GameConfig.WORLD_WIDTH - Obstacle.SIZE / 2f);
             float obstacleY = GameConfig.WORLD_HEIGHT;
 
-            Obstacle obstacle = new Obstacle();
+            Obstacle obstacle = obstaclePool.obtain();
             obstacle.setYSpeed(difficultyLevel.getObstacleSpeed());
             // block from cutting by bounds
             obstacleX = MathUtils.clamp(obstacleX,
@@ -122,6 +127,7 @@ public class GameController {
             float minObstacleY = -Obstacle.SIZE;
             if (first.getY() < 0) {
                 obstacles.removeValue(first, true);
+                obstaclePool.free(first);
             }
         }
     }
