@@ -7,6 +7,8 @@ public abstract class BaseGameObject {
 
     private float x;
     private float y;
+    private float width = 1;
+    private float height = 1;
     private Circle bounds;
 
     public BaseGameObject(float boundsRaduis) {
@@ -29,6 +31,12 @@ public abstract class BaseGameObject {
         updateBounds();
     }
 
+    public void setSize(float width, float height) {
+        this.width = width;
+        this.height = height;
+        updateBounds();
+    }
+
     public float getX() {
         return x;
     }
@@ -37,8 +45,19 @@ public abstract class BaseGameObject {
         return y;
     }
 
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
     public void updateBounds() {
-        bounds.setPosition(x, y);
+        float halfWidth = width / 2f;
+        float halfHeight = height / 2f;
+        // for fixing circle & texture position
+        bounds.setPosition(x + halfWidth, y + halfHeight);
     }
 
     public void drawDebug(ShapeRenderer renderer) {

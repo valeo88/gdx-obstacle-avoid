@@ -11,6 +11,7 @@ public class Player extends BaseGameObject {
 
     public Player() {
         super(BOUNDS_RADIUS);
+        setSize(SIZE, SIZE);
     }
 
     public void update() {
@@ -25,13 +26,5 @@ public class Player extends BaseGameObject {
 
         setX(getX() + xSpeed);
         updateBounds();
-    }
-
-    public float getWidth() {
-        return SIZE;
-    }
-
-    public float getHeight() {
-        return SIZE;
     }
 }
