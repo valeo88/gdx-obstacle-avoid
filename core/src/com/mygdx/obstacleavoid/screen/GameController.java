@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 import com.mygdx.obstacleavoid.config.DifficultyLevel;
 import com.mygdx.obstacleavoid.config.GameConfig;
+import com.mygdx.obstacleavoid.entity.Background;
 import com.mygdx.obstacleavoid.entity.Obstacle;
 import com.mygdx.obstacleavoid.entity.Player;
 
@@ -14,6 +15,7 @@ import com.mygdx.obstacleavoid.entity.Player;
 public class GameController {
     private static final Logger logger = new Logger(GameController.class.getName(), Logger.DEBUG);
 
+    private Background background;
     private Player player;
     private Array<Obstacle> obstacles = new Array<>();
     private float obstaclesTimer;
@@ -36,6 +38,10 @@ public class GameController {
         player.setPosition(startPlayerX, startPlayerY);
 
         obstaclePool = Pools.get(Obstacle.class, 40);
+
+        background = new Background();
+        background.setPosition(0,0);
+        background.setSize(GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
     }
 
     /** Update game world. */
@@ -73,6 +79,10 @@ public class GameController {
 
     public int getDisplayScore() {
         return displayScore;
+    }
+
+    public Background getBackground() {
+        return background;
     }
 
     private boolean isGameOver() {

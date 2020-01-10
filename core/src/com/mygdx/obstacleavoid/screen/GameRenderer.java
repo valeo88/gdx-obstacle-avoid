@@ -2,6 +2,7 @@ package com.mygdx.obstacleavoid.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,7 +12,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.obstacleavoid.assets.AssetsPaths;
 import com.mygdx.obstacleavoid.config.GameConfig;
+import com.mygdx.obstacleavoid.entity.Background;
 import com.mygdx.obstacleavoid.entity.Obstacle;
+import com.mygdx.obstacleavoid.entity.Player;
 import com.mygdx.obstacleavoid.util.GdxUtils;
 import com.mygdx.obstacleavoid.util.ViewportUtils;
 import com.mygdx.obstacleavoid.util.debug.DebugCameraController;
@@ -32,6 +35,10 @@ public class GameRenderer implements Disposable {
     private DebugCameraController debugCameraController;
     private final GameController controller;
 
+    private Texture playerTexture;
+    private Texture obstacleTexture;
+    private Texture backgroundTexture;
+
     public GameRenderer(GameController controller) {
         this.controller = controller;
         init();
@@ -49,6 +56,10 @@ public class GameRenderer implements Disposable {
 
         debugCameraController = new DebugCameraController();
         debugCameraController.setStartPosition(GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y);
+
+        playerTexture = new Texture(Gdx.files.internal("gameplay/player.png"));
+        obstacleTexture = new Texture(Gdx.files.internal("gameplay/obstacle.png"));
+        backgroundTexture = new Texture(Gdx.files.internal("gameplay/background.png"));
     }
 
     public void render(float delta) {
@@ -56,6 +67,8 @@ public class GameRenderer implements Disposable {
         debugCameraController.applyTo(camera);
 
         GdxUtils.clearScreen();
+
+        renderGamePlay();
 
         renderUi();
 
@@ -73,6 +86,32 @@ public class GameRenderer implements Disposable {
         renderer.dispose();
         batch.dispose();
         font.dispose();
+        playerTexture.dispose();
+        obstacleTexture.dispose();
+    }
+
+    private void renderGamePlay() {
+        viewport.apply();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+
+        // bg
+        Background background = controller.getBackground();
+        batch.draw(backgroundTexture, background.getX(), background.getY(),
+                background.getWidth(), background.getHeight());
+
+        // draw player
+        Player player = controller.getPlayer();
+        batch.draw(playerTexture, player.getX(), player.getY(),
+                player.getWidth(), player.getHeight());
+
+        // draw obstacles
+        for (Obstacle obstacle : controller.getObstacles()) {
+            batch.draw(obstacleTexture, obstacle.getX(), obstacle.getY(),
+                    obstacle.getWidth(), obstacle.getHeight());
+        }
+
+        batch.end();
     }
 
     private void renderUi() {
