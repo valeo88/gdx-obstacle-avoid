@@ -114,8 +114,8 @@ public class GameController {
     private void createNewObstacle(float delta) {
         obstaclesTimer += delta;
         if (obstaclesTimer >= GameConfig.OBSTACLE_SPAWN_TIME) {
-            float obstacleX = MathUtils.random(GameConfig.OBSTACLE_SIZE / 2f,
-                    GameConfig.WORLD_WIDTH - GameConfig.OBSTACLE_SIZE / 2f);
+            float obstacleX = MathUtils.random(0,
+                    GameConfig.WORLD_WIDTH - GameConfig.OBSTACLE_SIZE);
             float obstacleY = GameConfig.WORLD_HEIGHT;
 
             Obstacle obstacle = obstaclePool.obtain();
