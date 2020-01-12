@@ -1,5 +1,7 @@
 package com.mygdx.obstacleavoid.screen;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
@@ -91,7 +93,7 @@ public class GameController {
         return background;
     }
 
-    private boolean isGameOver() {
+    public boolean isGameOver() {
         return lives <= 0;
     }
 
@@ -102,7 +104,17 @@ public class GameController {
     }
 
     private void updatePlayer() {
-        player.update();
+        // moving player on x coordinate
+        float xSpeed = 0;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            xSpeed = GameConfig.MAX_PLAYER_X_SPEED;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            xSpeed = -GameConfig.MAX_PLAYER_X_SPEED;
+        }
+
+        player.setX(player.getX() + xSpeed);
+
         blockPlayerFromLeavingTheWorld();
     }
 
