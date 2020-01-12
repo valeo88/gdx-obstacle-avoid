@@ -15,6 +15,10 @@ import com.mygdx.obstacleavoid.entity.Player;
 public class GameController {
     private static final Logger logger = new Logger(GameController.class.getName(), Logger.DEBUG);
 
+    // we need use player width cuz of diff bw batch and shape renderer positioning
+    private final float startPlayerX = (GameConfig.WORLD_WIDTH - GameConfig.PLAYER_SIZE)/ 2f;
+    private final float startPlayerY = 1 - GameConfig.PLAYER_SIZE / 2f;
+
     private Background background;
     private Player player;
     private Array<Obstacle> obstacles = new Array<>();
@@ -32,10 +36,6 @@ public class GameController {
 
     private void init() {
         player = new Player();
-        // initial position
-        // we need use player width cuz of diff bw batch and shape renderer positioning
-        float startPlayerX = (GameConfig.WORLD_WIDTH - GameConfig.PLAYER_SIZE)/ 2f;
-        float startPlayerY = 1 - GameConfig.PLAYER_SIZE / 2f;
         player.setPosition(startPlayerX, startPlayerY);
 
         obstaclePool = Pools.get(Obstacle.class, 40);
@@ -48,7 +48,6 @@ public class GameController {
     /** Update game world. */
     public void update(float delta) {
         if (isGameOver()) {
-            logger.debug("Game over!");
             return;
         }
 
@@ -59,6 +58,12 @@ public class GameController {
 
         if (isPlayerCollidingWithObstacle()) {
             lives--;
+
+            if (isGameOver()) {
+                logger.debug("Game over!");
+            } else {
+                restart();
+            }
         }
     }
 
@@ -88,6 +93,12 @@ public class GameController {
 
     private boolean isGameOver() {
         return lives <= 0;
+    }
+
+    private void restart() {
+        obstaclePool.freeAll(obstacles);
+        obstacles.clear();
+        player.setPosition(startPlayerX, startPlayerY);
     }
 
     private void updatePlayer() {
