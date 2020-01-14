@@ -1,6 +1,7 @@
 package com.mygdx.obstacleavoid.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -12,7 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.obstacleavoid.assets.AssetsPaths;
+import com.mygdx.obstacleavoid.assets.AssetDescriptors;
 import com.mygdx.obstacleavoid.config.GameConfig;
 import com.mygdx.obstacleavoid.entity.Background;
 import com.mygdx.obstacleavoid.entity.Obstacle;
@@ -22,6 +23,9 @@ import com.mygdx.obstacleavoid.util.ViewportUtils;
 import com.mygdx.obstacleavoid.util.debug.DebugCameraController;
 
 public class GameRenderer implements Disposable {
+
+    private final AssetManager assetManager;
+    private final GameController controller;
 
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -35,13 +39,13 @@ public class GameRenderer implements Disposable {
     private final GlyphLayout layout = new GlyphLayout();
 
     private DebugCameraController debugCameraController;
-    private final GameController controller;
 
     private Texture playerTexture;
     private Texture obstacleTexture;
     private Texture backgroundTexture;
 
-    public GameRenderer(GameController controller) {
+    public GameRenderer(AssetManager assetManager, GameController controller) {
+        this.assetManager = assetManager;
         this.controller = controller;
         init();
     }
@@ -54,14 +58,14 @@ public class GameRenderer implements Disposable {
         hudCamera = new OrthographicCamera();
         hudViewport = new FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, hudCamera);
         batch = new SpriteBatch();
-        font = new BitmapFont(Gdx.files.internal(AssetsPaths.UI_FONT));
+        font = assetManager.get(AssetDescriptors.FONT);
 
         debugCameraController = new DebugCameraController();
         debugCameraController.setStartPosition(GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y);
 
-        playerTexture = new Texture(Gdx.files.internal("gameplay/player.png"));
-        obstacleTexture = new Texture(Gdx.files.internal("gameplay/obstacle.png"));
-        backgroundTexture = new Texture(Gdx.files.internal("gameplay/background.png"));
+        playerTexture = assetManager.get(AssetDescriptors.PLAYER);
+        obstacleTexture = assetManager.get(AssetDescriptors.OBSTACLE);
+        backgroundTexture = assetManager.get(AssetDescriptors.BACKGROUND);
     }
 
     public void render(float delta) {
@@ -98,9 +102,6 @@ public class GameRenderer implements Disposable {
     public void dispose() {
         renderer.dispose();
         batch.dispose();
-        font.dispose();
-        playerTexture.dispose();
-        obstacleTexture.dispose();
     }
 
     private void renderGamePlay() {
